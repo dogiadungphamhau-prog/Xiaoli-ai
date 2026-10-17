@@ -1,0 +1,41 @@
+# ============================================================
+# Cấu hình Xiaoli AI. KHÔNG viết cứng tên model trong code.
+# LƯU Ý QUAN TRỌNG: tên model và hạn mức free đổi liên tục.
+# Trước khi chạy thật, kiểm tra lại:
+#   - Gemini: Google AI Studio (xem model và hạn mức của tài khoản bạn)
+#   - OpenRouter: openrouter.ai/models (lọc các model có đuôi :free)
+# Các tên model dưới đây là GIÁ TRỊ MẪU, chưa được xác minh với danh sách hiện tại.
+# ============================================================
+timeout_seconds: 8          # chờ tối đa bao lâu cho ký tự đầu tiên, quá thì chuyển model kế
+daily_limit: 30             # số câu hỏi/ngày cho mỗi thiết bị
+ip_daily_limit: 90          # số câu hỏi/ngày cho mỗi địa chỉ IP
+max_prompt_chars: 4000      # độ dài tối đa câu hỏi
+max_response_chars: 8000    # cắt câu trả lời nếu dài hơn
+long_prompt_chars: 1500     # câu hỏi dài hơn mức này được xem là "văn bản dài"
+
+models:
+  gemini_flash:
+    provider: gemini
+    model: gemini-flash-latest
+    label: Gemini Flash
+  gemini_flash_lite:
+    provider: gemini
+    model: gemini-flash-lite-latest
+    label: Gemini Flash-Lite
+  deepseek_free:
+    provider: openrouter
+    model: deepseek/deepseek-chat-v3-0324:free
+    label: DeepSeek (free)
+  mimo_free:
+    provider: openrouter
+    model: xiaomi/mimo-v2-flash:free
+    label: MiMo (free)
+
+# Thứ tự ưu tiên model cho từng loại câu hỏi (model đầu lỗi thì sang model kế)
+routes:
+  code:      [deepseek_free, gemini_flash, mimo_free]
+  math:      [deepseek_free, gemini_flash, mimo_free]
+  translate: [gemini_flash, deepseek_free, mimo_free]
+  long:      [gemini_flash, mimo_free, deepseek_free]
+  quick:     [gemini_flash_lite, gemini_flash, mimo_free]
+  general:   [gemini_flash, deepseek_free, mimo_free]
